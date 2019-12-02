@@ -8,11 +8,18 @@ import java.util.List;
 import java.util.function.Function;
 
 public class InputReader<T> {
-	private List<T> input;
+	private String filename;
 	
-	public InputReader(String filename, Function<String, T> converter) {
-		
-		input = new ArrayList<T>();
+	public InputReader(String filename) {
+		this.filename = filename;
+	}
+	
+	public List<String> readLines() {
+		return (new InputReader<String>(filename)).readConvertLines(s -> s);
+	}
+	
+	public List<T> readConvertLines(Function<String, T> converter) {
+		List<T> input = new ArrayList<T>();
 
 		BufferedReader reader = null;
 		
@@ -33,9 +40,7 @@ public class InputReader<T> {
 				e.printStackTrace();
 			}
 		}
-	}
-	
-	public List<T> getInput() {
-		return new ArrayList<>(input);
+		
+		return input;
 	}
 }

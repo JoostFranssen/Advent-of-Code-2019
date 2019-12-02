@@ -9,8 +9,8 @@ public class Solution {
 	private static final String filename = "src/advent01/input.txt";
 	
 	public static void main(String[] args) {
-		InputReader<Integer> inputReader = new InputReader<>(filename, Integer::valueOf);
-		List<Integer> input = inputReader.getInput();
+		InputReader<Integer> inputReader = new InputReader<>(filename);
+		List<Integer> input = inputReader.readConvertLines(Integer::valueOf);
 		
 		System.out.println(totalRequiredFuel(input, Solution::requiredFuel));
 		System.out.println(totalRequiredFuel(input, Solution::requiredFuelIncludingFuel));
