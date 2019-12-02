@@ -6,10 +6,10 @@ import java.util.function.Function;
 import general.InputReader;
 
 public class Solution {
-	private static final String filename = "src/advent01/input.txt";
+	private static final String FILENAME = "src/advent01/input.txt";
 	
 	public static void main(String[] args) {
-		InputReader<Integer> inputReader = new InputReader<>(filename);
+		InputReader<Integer> inputReader = new InputReader<>(FILENAME);
 		List<Integer> input = inputReader.readConvertLines(Integer::valueOf);
 		
 		System.out.println(totalRequiredFuel(input, Solution::requiredFuel));
