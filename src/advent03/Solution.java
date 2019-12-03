@@ -1,6 +1,5 @@
 package advent03;
 
-import java.awt.Point;
 import java.util.List;
 
 import general.InputReader;
@@ -16,5 +15,7 @@ public class Solution {
 		Wire wire2 = new Wire(input.get(1));
 		
 		System.out.println(wire1.getClosestIntersectionManhattan(wire2));
+		
+		System.out.println(wire1.getClosestIntersectionTravelDistance(wire2));
 	}
 }

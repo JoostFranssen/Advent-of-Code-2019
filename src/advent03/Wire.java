@@ -34,7 +34,34 @@ public class Wire {
 	}
 	
 	public int getClosestIntersectionManhattan(Wire other) {
-		return getIntersections(other).stream().filter(p -> !(p.x == 0 && p.y == 0)).map(i -> Math.abs(i.x) + Math.abs(i.y)).min(Integer::compare).get();
+		return getIntersections(other).stream().filter(p -> !(p.x == 0 && p.y == 0)).map(i -> manhattenDistance(i)).min(Integer::compare).get();
+	}
+	
+	public int getTravelDistanceTo(Point target) {
+		int distance = 0;
+		
+		Point start = new Point(0, 0);
+		for(WireDirection direction : directions) {
+			if(direction.containsPointFrom(start, target)) {
+				distance += manhattenDistance(start, target);
+				break;
+			}
+			distance += direction.distance;
+			start = direction.getTranslation().apply(start);
+		}
+		
+		return distance;
+	}
+	
+	public int getClosestIntersectionTravelDistance(Wire other) {
+		return getIntersections(other).stream().filter(p -> !(p.x == 0 && p.y == 0)).map(i -> getTravelDistanceTo(i) + other.getTravelDistanceTo(i)).min(Integer::compare).get();
+	}
+	
+	public static int manhattenDistance(Point point) {
+		return manhattenDistance(point, new Point(0, 0));
+	}
+	public static int manhattenDistance(Point point1, Point point2) {
+		return Math.abs(point1.x - point2.x) + Math.abs(point1.y - point2.y);
 	}
 }
 
