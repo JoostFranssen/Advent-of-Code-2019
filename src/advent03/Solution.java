@@ -1,6 +1,6 @@
 package advent03;
 
-import static java.util.Arrays.asList;
+import java.awt.Point;
 import java.util.List;
 
 import general.InputReader;
@@ -12,10 +12,9 @@ public class Solution {
 		InputReader<String> inputReader = new InputReader<>(FILENAME);
 		List<String> input = inputReader.readLines();
 		
-		WireGrid grid = new WireGrid();
-		grid.addWire(asList(input.get(0).split(",")));
-		grid.addWire(asList(input.get(1).split(",")));
+		Wire wire1 = new Wire(input.get(0));
+		Wire wire2 = new Wire(input.get(1));
 		
-		System.out.println(grid.getMinIntersectionDistanceToOrigin());
+		System.out.println(wire1.getClosestIntersectionManhattan(wire2));
 	}
 }
