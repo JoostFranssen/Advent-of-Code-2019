@@ -1,24 +1,31 @@
 package advent04;
 
 import java.util.Arrays;
+import java.util.function.Predicate;
 
 public class Password {
 	public static final int LENGTH = 6;
 	
 	private int[] code = new int[LENGTH];
+	private Predicate<Password> validity;
 	
 	public Password(int code) {
+		this(code, Password::isValid);
+	}
+	public Password(int code, Predicate<Password> validity) {
+		this.validity = validity;
+		
 		for(int i = LENGTH - 1; i >= 0; i--) {
 			this.code[i] = code % 10;
 			code /= 10;
 		}
 		
-		if(!isValid()) {
+		if(!this.validity.test(this)) {
 			next();
 		}
 	}
 	
-	public int[] next() {
+	public void next() {
 		do {
 			int carry = 0;
 			code[LENGTH - 1] += 1;
@@ -35,9 +42,7 @@ public class Password {
 			for(int i = 1; i < LENGTH; i++) {
 				code[i] = Math.max(code[i - 1], code[i] % 10);
 			}
-		} while(!isValid());
-		
-		return code;
+		} while(!validity.test(this));
 	}
 	
 	public boolean isNondecreasing() {
@@ -60,6 +65,21 @@ public class Password {
 	
 	public boolean isValid() {
 		return containsPair() && isNondecreasing();
+	}
+	
+	public boolean containsExactPair() {
+		for(int i = 0; i < LENGTH - 1; i++) {
+			if(code[i] == code[i + 1]) {
+				if((i > 0 ? code[i - 1] != code[i] : true) && (i < LENGTH - 2 ? code[i + 2] != code[i] : true)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	public boolean isValidStrict() {
+		return containsExactPair() && isNondecreasing();
 	}
 	
 	public int getInt() {

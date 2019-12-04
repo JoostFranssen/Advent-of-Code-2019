@@ -12,7 +12,16 @@ public class Solution {
 			count++;
 			p.next();
 		}
+		System.out.println(count);
 		
+		
+		p = new Password(START, Password::isValidStrict);
+		
+		count = 0;
+		while(p.getInt() <= END) {
+			count++;
+			p.next();
+		}
 		System.out.println(count);
 	}
 }
