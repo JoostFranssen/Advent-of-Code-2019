@@ -87,7 +87,7 @@ public class Program {
 			throw new IllegalArgumentException("Program ended without halt code 99");
 		}
 		
-		if(!output.subList(0, output.size() - 1).stream().allMatch(i -> i == 0)) {
+		if(!output.isEmpty() && !output.subList(0, output.size() - 1).stream().allMatch(i -> i == 0)) {
 			throw new IllegalArgumentException("Got non-zero, non-final output code");
 		}
 		
