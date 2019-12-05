@@ -2,14 +2,13 @@ package intcode;
 
 import java.util.function.IntBinaryOperator;
 
-public class BinaryStoreOperation extends Operation {
+public class BinaryOperation extends Operation {
 	
 	private IntBinaryOperator function;
 	
-	public BinaryStoreOperation(IntBinaryOperator function) {
-		super();
+	public BinaryOperation(IntBinaryOperator function, OperationProperty... operationProperties) {
+		super(operationProperties);
 		this.function = function;
-		addOperationProperty(OperationProperty.STORE);
 	}
 	
 	@Override

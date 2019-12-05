@@ -32,6 +32,10 @@ public abstract class Operation {
 		operationProperties.add(property);
 	}
 	
+	protected final void removeOperationPRoperty(OperationProperty property) {
+		operationProperties.remove(property);
+	}
+	
 	protected final boolean checkProperty(OperationProperty property) {
 		return operationProperties.contains(property);
 	}

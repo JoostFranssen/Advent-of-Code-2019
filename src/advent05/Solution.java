@@ -15,6 +15,7 @@ public class Solution {
 		List<Integer> intcode = Arrays.asList(inputReader.readLines().get(0).split(",")).stream().map(Integer::valueOf).collect(Collectors.toList());
 		
 		Program program = new Program(intcode, 1);
+		program.execute();
 		System.out.println(program.getOutput());
 	}
 }

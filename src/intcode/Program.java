@@ -30,7 +30,8 @@ public class Program {
 		{
 			int parameterModeDeterminator = 0;
 			Operation operator = null;
-			for(int i = 0; i < sourceCode.size(); i++) {
+			int i = 0;
+			while(i < sourceCode.size()) {
 				int code = sourceCode.get(i);
 				
 				if(operator == null) {
@@ -41,6 +42,7 @@ public class Program {
 					parameterModeDeterminator = sourceCode.get(i) / 100;
 					
 					operator = getOperatorFromCode(code % 100);
+					i++;
 					continue;
 				}
 				
@@ -55,15 +57,22 @@ public class Program {
 				}
 				
 				if(operator.isReadyToExecute()) {
-					int result = operator.execute();
-					if(operator.checkProperty(OperationProperty.STORE)) {
+					Operation lastOperator = operator;
+					operator = null;
+					
+					int result = lastOperator.execute();
+					if(lastOperator.checkProperty(OperationProperty.STORE)) {
 						sourceCode.set(code, result);
 					}
-					if(operator.checkProperty(OperationProperty.OUTPUT)) {
-						output = operator.getOutput();
+					if(lastOperator.checkProperty(OperationProperty.OUTPUT)) {
+						output = lastOperator.getOutput();
 					}
-					operator = null;
+					if(lastOperator.checkProperty(OperationProperty.JUMP)) {
+						i = result;
+						continue;
+					}
 				}
+				i++;
 			}
 			throw new IllegalArgumentException("Program ended without halt code 99");
 		}
@@ -85,8 +94,8 @@ public class Program {
 	
 	private Operation getOperatorFromCode(int code) throws IllegalArgumentException {
 		switch(code) {
-			case ADDITION_CODE: return new BinaryStoreOperation((x, y) -> x + y);
-			case MULTIPLICATION_CODE: return new BinaryStoreOperation((x, y) -> x * y);
+			case ADDITION_CODE: return new BinaryOperation((x, y) -> x + y, OperationProperty.STORE);
+			case MULTIPLICATION_CODE: return new BinaryOperation((x, y) -> x * y, OperationProperty.STORE);
 			case INPUT_CODE: return new NullaryOperation(OperationProperty.STORE, OperationProperty.INPUT);
 			case OUTPUT_CODE: return new NullaryOperation(OperationProperty.OUTPUT);
 			default: throw new IllegalArgumentException("Code " + code + " not recognized as operator");
