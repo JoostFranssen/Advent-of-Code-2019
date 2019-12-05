@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import general.InputReader;
-import general.IntcodeProgram;
+import intcode.Program;
 
 public class Solution {
 	private static final String FILENAME = "src/advent02/input.txt";
@@ -46,7 +46,7 @@ public class Solution {
 		intcode.set(1, noun);
 		intcode.set(2, verb);
 		
-		IntcodeProgram program = new IntcodeProgram(intcode);
+		Program program = new Program(intcode);
 		return program.execute().get(0);
 	}
 }
