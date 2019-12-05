@@ -17,8 +17,9 @@ public class Program {
 	private static final int POSITION_MODE = 0;
 	private static final int IMMEDIATE_MODE = 1;
 	
-	List<Integer> sourceCode;
-	private Integer input, output;
+	private List<Integer> sourceCode;
+	private Integer input;
+	private List<Integer> output;
 	private int parameterMode;
 	
 	public Program(List<Integer> sourceCode) {
@@ -27,6 +28,7 @@ public class Program {
 	public Program(List<Integer> sourceCode, Integer input) {
 		this.sourceCode = new ArrayList<>(sourceCode);
 		this.input = input;
+		output = new ArrayList<>();
 	}
 	
 	public List<Integer> execute() throws IllegalArgumentException {
@@ -71,7 +73,7 @@ public class Program {
 						sourceCode.set(lastOperator.getStorePosition(), result);
 					}
 					if(lastOperator.checkProperty(OperationProperty.OUTPUT)) {
-						output = lastOperator.getOutput();
+						output.add(lastOperator.getOutput());
 					}
 					if(lastOperator.checkProperty(OperationProperty.JUMP)) {
 						if(result != -1) {
@@ -85,6 +87,10 @@ public class Program {
 			throw new IllegalArgumentException("Program ended without halt code 99");
 		}
 		
+		if(!output.subList(0, output.size() - 1).stream().allMatch(i -> i == 0)) {
+			throw new IllegalArgumentException("Got non-zero, non-final output code");
+		}
+		
 		return new ArrayList<>(sourceCode);
 	}
 	
@@ -94,9 +100,11 @@ public class Program {
 			case IMMEDIATE_MODE: return code;
 			default: throw new IllegalStateException("Parameter mode " + parameterMode + " is invalid");
 		}
+		
+		
 	}
 	
-	public Integer getOutput() {
+	public List<Integer> getOutput() {
 		return output;
 	}
 	
