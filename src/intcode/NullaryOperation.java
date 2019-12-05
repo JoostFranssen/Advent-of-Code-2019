@@ -12,15 +12,12 @@ public class NullaryOperation extends Operation {
 		if(checkProperty(OperationProperty.INPUT)) {
 			result = getInput();
 		}
-		if(checkProperty(OperationProperty.OUTPUT)) {
-			setOutput(getParameter(0));
-		}
 		return result;
 	}
 
 	@Override
 	protected int getNecessaryParameters() {
-		return 1;
+		return checkProperty(OperationProperty.STORE) ? 1 : 0;
 	}
 	
 }

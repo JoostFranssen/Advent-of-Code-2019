@@ -13,11 +13,15 @@ public class BinaryOperation extends Operation {
 	
 	@Override
 	public int execute() {
-		return function.applyAsInt(getParameter(0), getParameter(1));
+		int result = function.applyAsInt(getParameter(0), getParameter(1));
+		if(checkProperty(OperationProperty.OUTPUT)) {
+			setOutput(result);
+		}
+		return result;
 	}
 
 	@Override
 	protected int getNecessaryParameters() {
-		return 3;
+		return checkProperty(OperationProperty.STORE) ? 3 : 2;
 	}
 }

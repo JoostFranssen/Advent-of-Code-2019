@@ -7,15 +7,15 @@ import java.util.List;
 import java.util.Set;
 
 public abstract class Operation {
-	private int necessaryParameterCount;
 	private List<Integer> parameters;
+	private List<Integer> parametersCode; //always contains the code provided and not the actual value
 	private Set<OperationProperty> operationProperties;
 	private int input, output;
 	
 	public Operation() {
-		parameters = new ArrayList<Integer>();
+		parameters = new ArrayList<>();
+		parametersCode = new ArrayList<>();
 		operationProperties = new HashSet<OperationProperty>();
-		necessaryParameterCount = getNecessaryParameters();
 	}
 	public Operation(OperationProperty... operationProperties) {
 		this();
@@ -24,8 +24,9 @@ public abstract class Operation {
 	
 	protected abstract int getNecessaryParameters();
 	
-	public final void addParameter(Integer parameter) {
+	public final void addParameter(Integer parameter, Integer code) {
 		parameters.add(parameter);
+		parametersCode.add(code);
 	}
 	
 	protected final void addOperationProperty(OperationProperty property) {
@@ -41,7 +42,7 @@ public abstract class Operation {
 	}
 	
 	public final boolean isReadyToExecute() {
-		return necessaryParameterCount == parameters.size();
+		return getNecessaryParameters() == parameters.size();
 	}
 	
 	public final void supplyInput(Integer input) {
@@ -60,12 +61,12 @@ public abstract class Operation {
 		return output;
 	}
 	
-	public int getStorePosition() throws IncorrectOperationPropertyException {
-		if(!checkProperty(OperationProperty.STORE)) {
-			throw new IncorrectOperationPropertyException("Not a storing operation");
+	public int getStorePosition() {
+		if(checkProperty(OperationProperty.STORE)) {
+			return parametersCode.get(getNecessaryParameters() - 1);
+		} else {
+			throw new IllegalStateException("Operation does not store");
 		}
-		
-		return getParameter(necessaryParameterCount - 1);
 	}
 	
 	public abstract int execute();

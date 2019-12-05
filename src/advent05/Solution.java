@@ -17,5 +17,9 @@ public class Solution {
 		Program program = new Program(intcode, 1);
 		program.execute();
 		System.out.println(program.getOutput());
+		
+		program = new Program(intcode, 5);
+		program.execute();
+		System.out.println(program.getOutput());
 	}
 }

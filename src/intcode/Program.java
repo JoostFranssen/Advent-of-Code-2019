@@ -8,6 +8,10 @@ public class Program {
 	private static final int MULTIPLICATION_CODE = 2;
 	private static final int INPUT_CODE = 3;
 	private static final int OUTPUT_CODE = 4;
+	private static final int JUMP_IF_TRUE_CODE = 5;
+	private static final int JUMP_IF_FALSE_CODE = 6;
+	private static final int LESS_THAN_CODE = 7;
+	private static final int EQUALS_CODE = 8;
 	private static final int HALT_CODE = 99;
 	
 	private static final int POSITION_MODE = 0;
@@ -31,6 +35,7 @@ public class Program {
 			int parameterModeDeterminator = 0;
 			Operation operator = null;
 			int i = 0;
+			
 			while(i < sourceCode.size()) {
 				int code = sourceCode.get(i);
 				
@@ -50,7 +55,7 @@ public class Program {
 				parameterModeDeterminator /= 10;
 				
 				int value = getValueFromCode(code);
-				operator.addParameter(value);
+				operator.addParameter(value, code);
 				
 				if(operator.checkProperty(OperationProperty.INPUT)) {
 					operator.supplyInput(input);
@@ -61,15 +66,18 @@ public class Program {
 					operator = null;
 					
 					int result = lastOperator.execute();
+
 					if(lastOperator.checkProperty(OperationProperty.STORE)) {
-						sourceCode.set(code, result);
+						sourceCode.set(lastOperator.getStorePosition(), result);
 					}
 					if(lastOperator.checkProperty(OperationProperty.OUTPUT)) {
 						output = lastOperator.getOutput();
 					}
 					if(lastOperator.checkProperty(OperationProperty.JUMP)) {
-						i = result;
-						continue;
+						if(result != -1) {
+							i = result;
+							continue;
+						}
 					}
 				}
 				i++;
@@ -94,11 +102,24 @@ public class Program {
 	
 	private Operation getOperatorFromCode(int code) throws IllegalArgumentException {
 		switch(code) {
-			case ADDITION_CODE: return new BinaryOperation((x, y) -> x + y, OperationProperty.STORE);
-			case MULTIPLICATION_CODE: return new BinaryOperation((x, y) -> x * y, OperationProperty.STORE);
-			case INPUT_CODE: return new NullaryOperation(OperationProperty.STORE, OperationProperty.INPUT);
-			case OUTPUT_CODE: return new NullaryOperation(OperationProperty.OUTPUT);
-			default: throw new IllegalArgumentException("Code " + code + " not recognized as operator");
+			case ADDITION_CODE:
+				return new BinaryOperation((x, y) -> x + y, OperationProperty.STORE);
+			case MULTIPLICATION_CODE:
+				return new BinaryOperation((x, y) -> x * y, OperationProperty.STORE);
+			case INPUT_CODE:
+				return new NullaryOperation(OperationProperty.STORE, OperationProperty.INPUT);
+			case OUTPUT_CODE:
+				return new UnaryOperation(x -> x, OperationProperty.OUTPUT);
+			case JUMP_IF_TRUE_CODE:
+				return new BinaryOperation((x, y) -> x != 0 ? y : -1, OperationProperty.JUMP);
+			case JUMP_IF_FALSE_CODE:
+				return new BinaryOperation((x, y) -> x == 0 ? y : -1, OperationProperty.JUMP);
+			case LESS_THAN_CODE:
+				return new BinaryOperation((x, y) -> x < y ? 1 : 0, OperationProperty.STORE);
+			case EQUALS_CODE:
+				return new BinaryOperation((x, y) -> x == y ? 1 : 0, OperationProperty.STORE);
+			default:
+				throw new IllegalArgumentException("Code " + code + " not recognized as operator");
 		}
 	}
 }
