@@ -22,7 +22,8 @@ public class Program {
 	
 	private List<Integer> sourceCode;
 	private Queue<Integer> input;
-	private List<Integer> output;
+	private Queue<Integer> output;
+	private Integer lastRetrievedOutput;
 	private int parameterMode;
 	
 	private ProgramStatus status = ProgramStatus.NOT_STARTED;
@@ -33,7 +34,7 @@ public class Program {
 	public Program(List<Integer> sourceCode, Integer... input) {
 		this.sourceCode = new ArrayList<>(sourceCode);
 		this.input = new ArrayDeque<>(Arrays.asList(input));
-		output = new ArrayList<>();
+		output = new ArrayDeque<>();
 	}
 	
 	public ProgramStatus run() {
@@ -124,12 +125,24 @@ public class Program {
 		
 	}
 	
-	public List<Integer> getOutput() {
-		return output;
+	public void supplyInput(Integer input) {
+		this.input.add(input);
 	}
 	
-	public int getLastOutput() {
-		return output.get(output.size() - 1);
+	public Integer peekNextInput() {
+		return input.peek();
+	}
+	
+	public boolean hasOutput() {
+		return !output.isEmpty();
+	}
+	
+	public Integer getNextOutput() {
+		return lastRetrievedOutput = output.remove();
+	}
+	
+	public Integer getLastRetrievedOutput() {
+		return lastRetrievedOutput;
 	}
 	
 	public ProgramStatus getStatus() {

@@ -16,10 +16,17 @@ public class Solution {
 		
 		Program program = new Program(intcode, 1);
 		program.run();
-		System.out.println(program.getLastOutput()); //12234644
+		int result;
+		do {
+			result = program.getNextOutput();
+		} while(result == 0);
+		System.out.println(result); //12234644
 		
 		program = new Program(intcode, 5);
 		program.run();
-		System.out.println(program.getLastOutput()); //3508186
+		do {
+			result = program.getNextOutput();
+		} while(result == 0);
+		System.out.println(result); //3508186
 	}
 }
