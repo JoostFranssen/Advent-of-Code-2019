@@ -25,73 +25,93 @@ public class Program {
 	private List<Integer> output;
 	private int parameterMode;
 	
+	private ProgramStatus status = ProgramStatus.NOT_STARTED;
+	private int pointerPosition = 0;
+	private Operation currentOperation;
+	private int parameterModeDeterminator = 0;
+	
 	public Program(List<Integer> sourceCode, Integer... input) {
 		this.sourceCode = new ArrayList<>(sourceCode);
 		this.input = new ArrayDeque<>(Arrays.asList(input));
 		output = new ArrayList<>();
 	}
 	
-	public List<Integer> execute() throws IllegalArgumentException {
-		RUNNING:
-		{
-			int parameterModeDeterminator = 0;
-			Operation operator = null;
-			int i = 0;
-			
-			while(i < sourceCode.size()) {
-				int code = sourceCode.get(i);
-				
-				if(operator == null) {
-					if(code % 100 == HALT_CODE) {
-						break RUNNING;
-					}
-					
-					parameterModeDeterminator = sourceCode.get(i) / 100;
-					
-					operator = getOperatorFromCode(code % 100);
-					i++;
-					continue;
-				}
-				
-				parameterMode = parameterModeDeterminator % 10;
-				parameterModeDeterminator /= 10;
-				
-				int value = getValueFromCode(code);
-				operator.addParameter(value, code);
-				
-				if(operator.checkProperty(OperationProperty.INPUT)) {
-					operator.supplyInput(input.remove());
-				}
-				
-				if(operator.isReadyToExecute()) {
-					Operation lastOperator = operator;
-					operator = null;
-					
-					int result = lastOperator.execute();
-
-					if(lastOperator.checkProperty(OperationProperty.STORE)) {
-						sourceCode.set(lastOperator.getStorePosition(), result);
-					}
-					if(lastOperator.checkProperty(OperationProperty.OUTPUT)) {
-						output.add(lastOperator.getOutput());
-					}
-					if(lastOperator.checkProperty(OperationProperty.JUMP)) {
-						if(result != -1) {
-							i = result;
-							continue;
-						}
-					}
-				}
-				i++;
+	public ProgramStatus run() {
+		if(status == ProgramStatus.FINISHED) {
+			throw new IllegalStateException("Fininished program cannot be run");
+		}
+		if(status == ProgramStatus.WAITING_FOR_INPUT && input.isEmpty()) {
+			return status;
+		}
+		if(status == ProgramStatus.RUNNING) {
+			return status;
+		}
+		
+		status = ProgramStatus.RUNNING;
+		while(status == ProgramStatus.RUNNING) {
+			executeIteration();
+		}
+		return status;
+	}
+	
+	private void executeIteration() {
+		int code;
+		try {
+			code = sourceCode.get(pointerPosition);
+		} catch(IndexOutOfBoundsException e) {
+			throw new IllegalStateException("Invalid position in program reached: " + pointerPosition);
+		}
+		
+		if(currentOperation == null) {
+			if(code % 100 == HALT_CODE) {
+				status = ProgramStatus.FINISHED;
+				return;
 			}
-			throw new IllegalArgumentException("Program ended without halt code 99");
+			
+			parameterModeDeterminator = sourceCode.get(pointerPosition) / 100;
+			
+			currentOperation = getOperationFromCode(code % 100);
+			pointerPosition++;
+			return;
 		}
 		
-		if(!output.isEmpty() && !output.subList(0, output.size() - 1).stream().allMatch(i -> i == 0)) {
-			throw new IllegalArgumentException("Got non-zero, non-final output code");
+		if(currentOperation.checkProperty(OperationProperty.INPUT)) {
+			if(input.isEmpty()) {
+				status = ProgramStatus.WAITING_FOR_INPUT;
+				return;
+			} else {
+				currentOperation.supplyInput(input.remove());
+				status = ProgramStatus.RUNNING;
+			}
 		}
 		
-		return new ArrayList<>(sourceCode);
+		parameterMode = parameterModeDeterminator % 10;
+		parameterModeDeterminator /= 10;
+		
+		int value = getValueFromCode(code);
+		currentOperation.addParameter(value, code);
+		
+		if(currentOperation.isReadyToExecute()) {
+			Operation lastOperation = currentOperation;
+			currentOperation = null;
+			
+			int result = lastOperation.execute();
+			
+			if(lastOperation.checkProperty(OperationProperty.STORE)) {
+				sourceCode.set(lastOperation.getStorePosition(), result);
+			}
+			if(lastOperation.checkProperty(OperationProperty.OUTPUT)) {
+				output.add(lastOperation.getOutput());
+			}
+			if(lastOperation.checkProperty(OperationProperty.JUMP)) {
+				if(result != -1) {
+					pointerPosition = result;
+					return;
+				}
+			}
+		}
+		
+		pointerPosition++;
 	}
 	
 	private int getValueFromCode(int code) {
@@ -112,7 +132,15 @@ public class Program {
 		return output.get(output.size() - 1);
 	}
 	
-	private Operation getOperatorFromCode(int code) throws IllegalArgumentException {
+	public ProgramStatus getStatus() {
+		return status;
+	}
+	
+	public List<Integer> getSourceCode() {
+		return new ArrayList<>(sourceCode);
+	}
+	
+	private Operation getOperationFromCode(int code) throws IllegalArgumentException {
 		switch(code) {
 			case ADDITION_CODE:
 				return new BinaryOperation((x, y) -> x + y, OperationProperty.STORE);

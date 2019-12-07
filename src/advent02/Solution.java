@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import general.InputReader;
 import intcode.Program;
+import intcode.ProgramStatus;
 
 public class Solution {
 	private static final String FILENAME = "src/advent02/input.txt";
@@ -47,6 +48,11 @@ public class Solution {
 		intcode.set(2, verb);
 		
 		Program program = new Program(intcode);
-		return program.execute().get(0);
+		program.run();
+		if(program.getStatus() == ProgramStatus.FINISHED) {
+			return program.getSourceCode().get(0);
+		} else {
+			throw new IllegalStateException("Program did not finish properly");
+		}
 	}
 }

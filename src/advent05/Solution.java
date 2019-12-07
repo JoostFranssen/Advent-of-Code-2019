@@ -15,11 +15,11 @@ public class Solution {
 		List<Integer> intcode = Arrays.asList(inputReader.readLines().get(0).split(",")).stream().map(Integer::valueOf).collect(Collectors.toList());
 		
 		Program program = new Program(intcode, 1);
-		program.execute();
+		program.run();
 		System.out.println(program.getLastOutput()); //12234644
 		
 		program = new Program(intcode, 5);
-		program.execute();
+		program.run();
 		System.out.println(program.getLastOutput()); //3508186
 	}
 }

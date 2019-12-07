@@ -36,7 +36,7 @@ public class Solution {
 		
 		for(int i = 0; i < phaseSettings.length; i++) {
 			program = new Program(intcode, phaseSettings[i], input);
-			program.execute();
+			program.run();
 			input = program.getLastOutput();
 		}
 		
