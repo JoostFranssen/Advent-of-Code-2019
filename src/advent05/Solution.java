@@ -16,10 +16,10 @@ public class Solution {
 		
 		Program program = new Program(intcode, 1);
 		program.execute();
-		System.out.println(program.getLastOutput());
+		System.out.println(program.getLastOutput()); //12234644
 		
 		program = new Program(intcode, 5);
 		program.execute();
-		System.out.println(program.getLastOutput());
+		System.out.println(program.getLastOutput()); //3508186
 	}
 }

@@ -19,7 +19,7 @@ public class Solution {
 		
 		List<Integer> intcode = Arrays.asList(input.split(",")).stream().map(Integer::valueOf).collect(Collectors.toList());
 		
-		System.out.println(executeInputNounVerb(intcode, 12, 2));
+		System.out.println(executeInputNounVerb(intcode, 12, 2)); //3101878
 		
 		int noun = 0;
 		int verb = 0;
@@ -36,7 +36,7 @@ public class Solution {
 		}
 		
 		if(outputFound) {
-			System.out.println(100 * noun + verb);
+			System.out.println(100 * noun + verb); //8444
 		}
 	}
 	

@@ -12,7 +12,7 @@ public class Solution {
 			count++;
 			p.next();
 		}
-		System.out.println(count);
+		System.out.println(count); //1955
 		
 		
 		p = new Password(START, Password::isValidStrict);
@@ -22,6 +22,6 @@ public class Solution {
 			count++;
 			p.next();
 		}
-		System.out.println(count);
+		System.out.println(count); //1319
 	}
 }

@@ -16,6 +16,7 @@ public class Solution {
 		String input = inputReader.readLines().get(0);
 		List<Integer> intcode = Arrays.asList(input.split(",")).stream().map(Integer::valueOf).collect(Collectors.toList());
 		
+		//part 1
 		int maxValue = Integer.MIN_VALUE;
 		Integer[] maxPermutation = null;
 		for(Integer[] permutation : Permutation.getDigitPermutation(4)) {
@@ -26,7 +27,7 @@ public class Solution {
 			}
 		}
 		
-		System.out.println(String.format("%d: %s", maxValue, Arrays.toString(maxPermutation)));
+		System.out.println(String.format("%d: %s", maxValue, Arrays.toString(maxPermutation))); //65464: [0, 3, 4, 2, 1]
 	}
 	
 	private static int computeAmplifiers(List<Integer> intcode, int startInput, Integer... phaseSettings) {

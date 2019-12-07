@@ -35,13 +35,13 @@ public class Solution {
 			count += bodies.get(name).countOrbits();
 		}
 		
-		System.out.println(count);
+		System.out.println(count); //453028
 		
 		//part 2
 		Body you = bodies.get("YOU");
 		Body yourOrbit = you.getOrbitedBody();
 		Body target = bodies.get("SAN").getOrbitedBody();
 		
-		System.out.println(yourOrbit.getFewestConnectionsTo(target, you).get());
+		System.out.println(yourOrbit.getFewestConnectionsTo(target, you).get()); //562
 	}
 }

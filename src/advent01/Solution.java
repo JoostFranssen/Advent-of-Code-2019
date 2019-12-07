@@ -12,8 +12,8 @@ public class Solution {
 		InputReader<Integer> inputReader = new InputReader<>(FILENAME);
 		List<Integer> input = inputReader.readConvertLines(Integer::valueOf);
 		
-		System.out.println(totalRequiredFuel(input, Solution::requiredFuel));
-		System.out.println(totalRequiredFuel(input, Solution::requiredFuelIncludingFuel));
+		System.out.println(totalRequiredFuel(input, Solution::requiredFuel)); //3511949
+		System.out.println(totalRequiredFuel(input, Solution::requiredFuelIncludingFuel)); //5265045
 	}
 	
 	private static int requiredFuel(int mass) {
