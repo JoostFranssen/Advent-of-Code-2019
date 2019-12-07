@@ -8,23 +8,26 @@ import java.util.stream.Collectors;
 public class Permutation {
 	private Permutation() {}
 	
-	public static List<Integer[]> getDigitPermutation(int range) { //e.g. range = 3: permutations are of 0, 1, 2, 3;
-		return getDigitPermutationList(range).stream().map(p -> p.toArray(Integer[]::new)).collect(Collectors.toList());
+	public static List<Integer[]> getDigitPermutation(int max) {
+		return getDigitPermutation(0, max);
+	}
+	public static List<Integer[]> getDigitPermutation(int min, int max) {
+		return getDigitPermutationList(min, max).stream().map(p -> p.toArray(Integer[]::new)).collect(Collectors.toList());
 	}
 	
-	public static List<List<Integer>> getDigitPermutationList(int range) {
-		if(range <= 0) {
+	public static List<List<Integer>> getDigitPermutationList(int min, int max) {
+		if(max <= min) {
 			List<List<Integer>> permutations = new ArrayList<>();
-			permutations.add(Arrays.asList(0));
+			permutations.add(Arrays.asList(min));
 			return permutations;
 		}
 		
-		List<List<Integer>> subPermutations = getDigitPermutationList(range - 1);
+		List<List<Integer>> subPermutations = getDigitPermutationList(min, max - 1);
 		List<List<Integer>> permutations = new ArrayList<>();
-		for(int i = 0; i <= range; i++) {
+		for(int i = min; i <= max; i++) {
 			for(List<Integer> perm : subPermutations) {
 				List<Integer> newPerm = new ArrayList<>(perm);
-				newPerm.add(i, range);
+				newPerm.add(i - min, max);
 				permutations.add(newPerm);
 			}
 		}
