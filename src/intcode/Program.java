@@ -1,7 +1,10 @@
 package intcode;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Queue;
 
 public class Program {
 	private static final int ADDITION_CODE = 1;
@@ -18,16 +21,13 @@ public class Program {
 	private static final int IMMEDIATE_MODE = 1;
 	
 	private List<Integer> sourceCode;
-	private Integer input;
+	private Queue<Integer> input;
 	private List<Integer> output;
 	private int parameterMode;
 	
-	public Program(List<Integer> sourceCode) {
-		this(sourceCode, null);
-	}
-	public Program(List<Integer> sourceCode, Integer input) {
+	public Program(List<Integer> sourceCode, Integer... input) {
 		this.sourceCode = new ArrayList<>(sourceCode);
-		this.input = input;
+		this.input = new ArrayDeque<>(Arrays.asList(input));
 		output = new ArrayList<>();
 	}
 	
@@ -60,7 +60,7 @@ public class Program {
 				operator.addParameter(value, code);
 				
 				if(operator.checkProperty(OperationProperty.INPUT)) {
-					operator.supplyInput(input);
+					operator.supplyInput(input.remove());
 				}
 				
 				if(operator.isReadyToExecute()) {
