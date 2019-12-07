@@ -108,6 +108,10 @@ public class Program {
 		return output;
 	}
 	
+	public int getLastOutput() {
+		return output.get(output.size() - 1);
+	}
+	
 	private Operation getOperatorFromCode(int code) throws IllegalArgumentException {
 		switch(code) {
 			case ADDITION_CODE:
