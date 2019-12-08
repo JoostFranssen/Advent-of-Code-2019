@@ -42,7 +42,7 @@ public class Solution {
 			}
 		}
 		
-		System.out.println(String.format("%d: %s", maxValue, Arrays.toString(maxPermutation)));
+		System.out.println(String.format("%d: %s", maxValue, Arrays.toString(maxPermutation))); //1518124: [7, 9, 5, 6, 8]
 	}
 	
 	private static int computeAmplifiers(List<Integer> intcode, int startInput, Integer... phaseSettings) {
