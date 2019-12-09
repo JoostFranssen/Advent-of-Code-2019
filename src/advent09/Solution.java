@@ -1,6 +1,5 @@
 package advent09;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,18 +17,10 @@ public class Solution {
 		
 		Program program = new Program(intcode, 1L);
 		program.run();
-		List<Long> output = new ArrayList<>();
-		while(program.hasOutput()) {
-			output.add(program.getNextOutput());
-		}
-		System.out.println(output); //[3280416268]
+		System.out.println(program.getNextOutput()); //3280416268
 		
 		program = new Program(intcode, 2L);
 		program.run();
-		output = new ArrayList<>();
-		while(program.hasOutput()) {
-			output.add(program.getNextOutput());
-		}
-		System.out.println(output); //[80210]
+		System.out.println(program.getNextOutput()); //80210
 	}
 }
