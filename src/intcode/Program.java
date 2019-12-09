@@ -66,7 +66,7 @@ public class Program {
 	private void executeIteration() {
 		long code;
 		try {
-			code = sourceCode.get(pointerPosition);
+			code = getFromSourceCode(pointerPosition);
 		} catch(IndexOutOfBoundsException e) {
 			throw new IllegalStateException("Invalid position in program reached: " + pointerPosition);
 		}
@@ -77,7 +77,7 @@ public class Program {
 				return;
 			}
 			
-			parameterModeDeterminator = sourceCode.get(pointerPosition) / 100;
+			parameterModeDeterminator = getFromSourceCode(pointerPosition) / 100;
 			
 			currentOperation = getOperationFromCode((int)(code % 100));
 			pointerPosition++;
@@ -98,7 +98,7 @@ public class Program {
 		parameterModeDeterminator /= 10;
 		
 		long value = getValueFromCode(code);
-		currentOperation.addParameter(value, code);
+		currentOperation.addParameter(value, code + (parameterMode == RELATIVE_MODE ? relativeBase : 0));
 		
 		if(currentOperation.isReadyToExecute()) {
 			Operation lastOperation = currentOperation;
@@ -125,10 +125,21 @@ public class Program {
 	
 	private long getValueFromCode(long code) {
 		switch(parameterMode) {
-			case POSITION_MODE: return sourceCode.get(code);
+			case POSITION_MODE: return getFromSourceCode(code);
 			case IMMEDIATE_MODE: return code;
-			case RELATIVE_MODE: return sourceCode.get(code + relativeBase);
+			case RELATIVE_MODE: return getFromSourceCode(code + relativeBase);
 			default: throw new IllegalStateException("Parameter mode " + parameterMode + " is invalid");
+		}
+	}
+	
+	private long getFromSourceCode(Long position) {
+		if(position < 0) {
+			throw new IllegalArgumentException("Cannot access negative positions of the program");
+		}
+		if(sourceCode.containsKey(position)) {
+			return sourceCode.get(position);
+		} else {
+			return 0L;
 		}
 	}
 	
