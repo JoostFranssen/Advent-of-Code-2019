@@ -7,8 +7,8 @@ public class NullaryOperation extends Operation {
 	}
 	
 	@Override
-	public int execute() {
-		int result = -1;
+	public long execute() {
+		long result = -1L;
 		if(checkProperty(OperationProperty.INPUT)) {
 			result = getInput();
 		}

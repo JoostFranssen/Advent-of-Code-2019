@@ -12,17 +12,17 @@ public class Solution {
 	
 	public static void main(String[] args) {
 		InputReader<String> inputReader = new InputReader<>(FILENAME);
-		List<Integer> intcode = Arrays.asList(inputReader.readLines().get(0).split(",")).stream().map(Integer::valueOf).collect(Collectors.toList());
+		List<Long> intcode = Arrays.asList(inputReader.readLines().get(0).split(",")).stream().map(Long::valueOf).collect(Collectors.toList());
 		
-		Program program = new Program(intcode, 1);
+		Program program = new Program(intcode, 1L);
 		program.run();
-		int result;
+		long result;
 		do {
 			result = program.getNextOutput();
-		} while(result == 0);
+		} while(result == 0L);
 		System.out.println(result); //12234644
 		
-		program = new Program(intcode, 5);
+		program = new Program(intcode, 5L);
 		program.run();
 		do {
 			result = program.getNextOutput();

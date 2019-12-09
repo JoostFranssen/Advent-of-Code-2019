@@ -18,7 +18,7 @@ public class Solution {
 		InputReader<String> inputReader = new InputReader<>(FILENAME);
 		String input = inputReader.readLines().get(0);
 		
-		List<Integer> intcode = Arrays.asList(input.split(",")).stream().map(Integer::valueOf).collect(Collectors.toList());
+		List<Long> intcode = Arrays.asList(input.split(",")).stream().map(Long::valueOf).collect(Collectors.toList());
 		
 		System.out.println(executeInputNounVerb(intcode, 12, 2)); //3101878
 		
@@ -41,8 +41,8 @@ public class Solution {
 		}
 	}
 	
-	private static int executeInputNounVerb(List<Integer> input, int noun, int verb) {
-		List<Integer> intcode = new ArrayList<>(input);
+	private static long executeInputNounVerb(List<Long> input, long noun, long verb) {
+		List<Long> intcode = new ArrayList<>(input);
 		
 		intcode.set(1, noun);
 		intcode.set(2, verb);
@@ -50,7 +50,7 @@ public class Solution {
 		Program program = new Program(intcode);
 		program.run();
 		if(program.getStatus() == ProgramStatus.FINISHED) {
-			return program.getSourceCode().get(0);
+			return program.getSourceCode().get(0L);
 		} else {
 			throw new IllegalStateException("Program did not finish properly");
 		}

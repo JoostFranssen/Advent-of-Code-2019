@@ -1,9 +1,10 @@
 package intcode;
 
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 
 public class Program {
@@ -15,24 +16,31 @@ public class Program {
 	private static final int JUMP_IF_FALSE_CODE = 6;
 	private static final int LESS_THAN_CODE = 7;
 	private static final int EQUALS_CODE = 8;
+	private static final int ADJUST_RELATIVE_BASE_CODE = 9;
 	private static final int HALT_CODE = 99;
 	
 	private static final int POSITION_MODE = 0;
 	private static final int IMMEDIATE_MODE = 1;
+	private static final int RELATIVE_MODE = 2;
 	
-	private List<Integer> sourceCode;
-	private Queue<Integer> input;
-	private Queue<Integer> output;
-	private Integer lastRetrievedOutput;
+	private Map<Long, Long> sourceCode;
+	private Queue<Long> input;
+	private Queue<Long> output;
+	private Long lastRetrievedOutput;
 	private int parameterMode;
+	private long relativeBase;
 	
 	private ProgramStatus status = ProgramStatus.NOT_STARTED;
-	private int pointerPosition = 0;
+	private Long pointerPosition = 0L;
 	private Operation currentOperation;
-	private int parameterModeDeterminator = 0;
+	private long parameterModeDeterminator = 0L;
 	
-	public Program(List<Integer> sourceCode, Integer... input) {
-		this.sourceCode = new ArrayList<>(sourceCode);
+	public Program(List<Long> sourceCode, Long... input) {
+		this.sourceCode = new HashMap<>();
+		for(int i = 0; i < sourceCode.size(); i++) {
+			this.sourceCode.put((long)i, sourceCode.get(i));
+		}
+		
 		this.input = new ArrayDeque<>(Arrays.asList(input));
 		output = new ArrayDeque<>();
 	}
@@ -56,7 +64,7 @@ public class Program {
 	}
 	
 	private void executeIteration() {
-		int code;
+		long code;
 		try {
 			code = sourceCode.get(pointerPosition);
 		} catch(IndexOutOfBoundsException e) {
@@ -71,7 +79,7 @@ public class Program {
 			
 			parameterModeDeterminator = sourceCode.get(pointerPosition) / 100;
 			
-			currentOperation = getOperationFromCode(code % 100);
+			currentOperation = getOperationFromCode((int)(code % 100));
 			pointerPosition++;
 			return;
 		}
@@ -86,20 +94,20 @@ public class Program {
 			}
 		}
 		
-		parameterMode = parameterModeDeterminator % 10;
+		parameterMode = (int)(parameterModeDeterminator % 10);
 		parameterModeDeterminator /= 10;
 		
-		int value = getValueFromCode(code);
+		long value = getValueFromCode(code);
 		currentOperation.addParameter(value, code);
 		
 		if(currentOperation.isReadyToExecute()) {
 			Operation lastOperation = currentOperation;
 			currentOperation = null;
 			
-			int result = lastOperation.execute();
+			long result = lastOperation.execute();
 			
 			if(lastOperation.checkProperty(OperationProperty.STORE)) {
-				sourceCode.set(lastOperation.getStorePosition(), result);
+				sourceCode.put(lastOperation.getStorePosition(), result);
 			}
 			if(lastOperation.checkProperty(OperationProperty.OUTPUT)) {
 				output.add(lastOperation.getOutput());
@@ -115,21 +123,25 @@ public class Program {
 		pointerPosition++;
 	}
 	
-	private int getValueFromCode(int code) {
+	private long getValueFromCode(long code) {
 		switch(parameterMode) {
 			case POSITION_MODE: return sourceCode.get(code);
 			case IMMEDIATE_MODE: return code;
+			case RELATIVE_MODE: return sourceCode.get(code + relativeBase);
 			default: throw new IllegalStateException("Parameter mode " + parameterMode + " is invalid");
 		}
-		
-		
 	}
 	
-	public void supplyInput(Integer input) {
+	private long adjustRelativeBase(long value) {
+		relativeBase += value;
+		return relativeBase;
+	}
+	
+	public void supplyInput(Long input) {
 		this.input.add(input);
 	}
 	
-	public Integer peekNextInput() {
+	public Long peekNextInput() {
 		return input.peek();
 	}
 	
@@ -137,11 +149,11 @@ public class Program {
 		return !output.isEmpty();
 	}
 	
-	public Integer getNextOutput() {
+	public Long getNextOutput() {
 		return lastRetrievedOutput = output.remove();
 	}
 	
-	public Integer getLastRetrievedOutput() {
+	public Long getLastRetrievedOutput() {
 		return lastRetrievedOutput;
 	}
 	
@@ -149,8 +161,8 @@ public class Program {
 		return status;
 	}
 	
-	public List<Integer> getSourceCode() {
-		return new ArrayList<>(sourceCode);
+	public Map<Long, Long> getSourceCode() {
+		return new HashMap<>(sourceCode);
 	}
 	
 	private Operation getOperationFromCode(int code) throws IllegalArgumentException {
@@ -171,6 +183,8 @@ public class Program {
 				return new BinaryOperation((x, y) -> x < y ? 1 : 0, OperationProperty.STORE);
 			case EQUALS_CODE:
 				return new BinaryOperation((x, y) -> x == y ? 1 : 0, OperationProperty.STORE);
+			case ADJUST_RELATIVE_BASE_CODE:
+				return new UnaryOperation(x -> adjustRelativeBase(x));
 			default:
 				throw new IllegalArgumentException("Code " + code + " not recognized as operator");
 		}

@@ -16,13 +16,13 @@ public class Solution {
 	public static void main(String[] args) {
 		InputReader<String> inputReader = new InputReader<>(FILENAME);
 		String input = inputReader.readLines().get(0);
-		List<Integer> intcode = Arrays.asList(input.split(",")).stream().map(Integer::valueOf).collect(Collectors.toList());
+		List<Long> intcode = Arrays.asList(input.split(",")).stream().map(Long::valueOf).collect(Collectors.toList());
 		
 		//part 1
-		int maxValue = Integer.MIN_VALUE;
+		long maxValue = Long.MIN_VALUE;
 		Integer[] maxPermutation = null;
 		for(Integer[] permutation : Permutation.getDigitPermutation(4)) {
-			int value = computeAmplifiers(intcode, 0, permutation);
+			long value = computeAmplifiers(intcode, 0L, permutation);
 			if(value > maxValue) {
 				maxValue = value;
 				maxPermutation = permutation;
@@ -35,7 +35,7 @@ public class Solution {
 		maxValue = Integer.MIN_VALUE;
 		maxPermutation = null;
 		for(Integer[] permutation : Permutation.getDigitPermutation(5, 9)) {
-			int value = computeAmplifiersFeedbackLoop(intcode, 0, permutation);
+			long value = computeAmplifiersFeedbackLoop(intcode, 0L, permutation);
 			if(value > maxValue) {
 				maxValue = value;
 				maxPermutation = permutation;
@@ -45,12 +45,12 @@ public class Solution {
 		System.out.println(String.format("%d: %s", maxValue, Arrays.toString(maxPermutation))); //1518124: [7, 9, 5, 6, 8]
 	}
 	
-	private static int computeAmplifiers(List<Integer> intcode, int startInput, Integer... phaseSettings) {
+	private static long computeAmplifiers(List<Long> intcode, long startInput, Integer... phaseSettings) {
 		Program program;
-		int input = startInput;
+		long input = startInput;
 		
 		for(int i = 0; i < phaseSettings.length; i++) {
-			program = new Program(intcode, phaseSettings[i], input);
+			program = new Program(intcode, (long)phaseSettings[i], input);
 			program.run();
 			input = program.getNextOutput();
 		}
@@ -58,11 +58,11 @@ public class Solution {
 		return input;
 	}
 	
-	private static int computeAmplifiersFeedbackLoop(List<Integer> intcode, int startInput, Integer... phaseSettings) {
+	private static long computeAmplifiersFeedbackLoop(List<Long> intcode, long startInput, Integer... phaseSettings) {
 		Program[] programs = new Program[phaseSettings.length];
 		
 		for(int i = 0; i < programs.length; i++) {
-			programs[i] = new Program(intcode, phaseSettings[i]);
+			programs[i] = new Program(intcode, (long)phaseSettings[i]);
 		}
 		
 		programs[0].supplyInput(startInput);
@@ -91,7 +91,7 @@ public class Solution {
 			}
 		});
 		if(programs[programs.length - 1].getStatus() == ProgramStatus.FINISHED) {
-			int result = programs[programs.length - 1].getLastRetrievedOutput();
+			long result = programs[programs.length - 1].getLastRetrievedOutput();
 			do {
 				result = programs[programs.length - 1].getNextOutput();
 			} while(programs[programs.length - 1].hasOutput());

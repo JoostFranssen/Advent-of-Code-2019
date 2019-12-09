@@ -1,19 +1,19 @@
 package intcode;
 
-import java.util.function.IntBinaryOperator;
+import java.util.function.LongBinaryOperator;
 
 public class BinaryOperation extends Operation {
 	
-	private IntBinaryOperator function;
+	private LongBinaryOperator function;
 	
-	public BinaryOperation(IntBinaryOperator function, OperationProperty... operationProperties) {
+	public BinaryOperation(LongBinaryOperator function, OperationProperty... operationProperties) {
 		super(operationProperties);
 		this.function = function;
 	}
 	
 	@Override
-	public int execute() {
-		int result = function.applyAsInt(getParameter(0), getParameter(1));
+	public long execute() {
+		long result = function.applyAsLong(getParameter(0), getParameter(1));
 		if(checkProperty(OperationProperty.OUTPUT)) {
 			setOutput(result);
 		}

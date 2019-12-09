@@ -1,18 +1,18 @@
 package intcode;
 
-import java.util.function.IntUnaryOperator;
+import java.util.function.LongUnaryOperator;
 
 public class UnaryOperation extends Operation {
-	private IntUnaryOperator function;
+	private LongUnaryOperator function;
 	
-	public UnaryOperation(IntUnaryOperator function, OperationProperty... operationProperties) {
+	public UnaryOperation(LongUnaryOperator function, OperationProperty... operationProperties) {
 		super(operationProperties);
 		this.function = function;
 	}
 
 	@Override
-	public int execute() {
-		int result = function.applyAsInt(getParameter(0));
+	public long execute() {
+		long result = function.applyAsLong(getParameter(0));
 		if(checkProperty(OperationProperty.OUTPUT)) {
 			setOutput(result);
 		}

@@ -7,10 +7,10 @@ import java.util.List;
 import java.util.Set;
 
 public abstract class Operation {
-	private List<Integer> parameters;
-	private List<Integer> parametersCode; //always contains the code provided and not the actual value
+	private List<Long> parameters;
+	private List<Long> parametersCode; //always contains the code provided and not the actual value
 	private Set<OperationProperty> operationProperties;
-	private int input, output;
+	private long input, output;
 	
 	public Operation() {
 		parameters = new ArrayList<>();
@@ -24,7 +24,7 @@ public abstract class Operation {
 	
 	protected abstract int getNecessaryParameters();
 	
-	public final void addParameter(Integer parameter, Integer code) {
+	public final void addParameter(Long parameter, Long code) {
 		parameters.add(parameter);
 		parametersCode.add(code);
 	}
@@ -45,23 +45,23 @@ public abstract class Operation {
 		return getNecessaryParameters() == parameters.size();
 	}
 	
-	public final void supplyInput(Integer input) {
+	public final void supplyInput(Long input) {
 		this.input = input;
 	}
 	
-	public final int getInput() {
+	public final long getInput() {
 		return input;
 	}
 	
-	protected final void setOutput(int output) {
+	protected final void setOutput(long output) {
 		this.output = output;
 	}
 	
-	public final int getOutput() {
+	public final long getOutput() {
 		return output;
 	}
 	
-	public int getStorePosition() {
+	public long getStorePosition() {
 		if(checkProperty(OperationProperty.STORE)) {
 			return parametersCode.get(getNecessaryParameters() - 1);
 		} else {
@@ -69,17 +69,17 @@ public abstract class Operation {
 		}
 	}
 	
-	public abstract int execute();
+	public abstract long execute();
 	
 	protected final int getParameterCount() {
 		return parameters.size();
 	}
 	
-	protected final int getParameter(int index) {
+	protected final long getParameter(int index) {
 		return parameters.get(index);
 	}
 	
-	public final List<Integer> getParameters() {
+	public final List<Long> getParameters() {
 		return new ArrayList<>(parameters);
 	}
 }
