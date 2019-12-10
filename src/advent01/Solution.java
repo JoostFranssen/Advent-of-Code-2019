@@ -3,7 +3,7 @@ package advent01;
 import java.util.List;
 import java.util.function.Function;
 
-import general.InputReader;
+import util.InputReader;
 
 public class Solution {
 	private static final String FILENAME = "src/advent01/input.txt";

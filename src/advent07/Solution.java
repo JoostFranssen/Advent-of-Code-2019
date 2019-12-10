@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
-import general.InputReader;
-import general.Permutation;
 import intcode.Program;
 import intcode.ProgramStatus;
+import util.InputReader;
+import util.Permutation;
 
 public class Solution {
 	private static final String FILENAME = "src/advent07/input.txt";

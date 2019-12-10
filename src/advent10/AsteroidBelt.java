@@ -23,10 +23,15 @@ public class AsteroidBelt {
 			countVisibleAsteroidsFrom(asteroid);
 		}
 		
-		return asteroids.stream().max((a1, a2) -> Integer.compare(a1.getVisibleAsteroids(), a2.getVisibleAsteroids())).get();
+		return asteroids.stream().max((a1, a2) -> Integer.compare(a1.getVisibleAsteroidCount(), a2.getVisibleAsteroidCount())).get();
 	}
 	
-	private void countVisibleAsteroidsFrom(Asteroid asteroid) {
+	public void vaporizeAsteroids(List<Asteroid> toBeVaporized) {
+		asteroids.removeAll(toBeVaporized);
+		asteroids.forEach(a -> a.clearAllVisibleAsteroids());
+	}
+	
+	public void countVisibleAsteroidsFrom(Asteroid asteroid) {
 		TARGET_LOOP:
 		for(Asteroid target : asteroids) {
 			if(asteroid.equals(target)) {
@@ -40,7 +45,28 @@ public class AsteroidBelt {
 					continue TARGET_LOOP;
 				}
 			}
-			asteroid.addAsteroid();
+			asteroid.addAsteroid(target);
 		}
+	}
+	
+	public List<Asteroid> getVisibleAsteroidsInOrderOfRotation(Asteroid asteroid) {
+		List<Asteroid> visibles = new ArrayList<Asteroid>();
+		TARGET_LOOP:
+		for(Asteroid target : asteroids) {
+			if(asteroid.equals(target)) {
+				continue;
+			}
+			for(Asteroid other : asteroids) {
+				if(other.equals(target) || other.equals(asteroid)) {
+					continue;
+				}
+				if(other.onLineSegment(asteroid, target)) {
+					continue TARGET_LOOP;
+				}
+			}
+			visibles.add(target);
+		}
+		visibles.sort((a1, a2) -> (int)Math.signum(asteroid.angleBetween(a1) - asteroid.angleBetween(a2)));
+		return visibles;
 	}
 }

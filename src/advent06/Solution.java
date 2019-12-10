@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import general.InputReader;
+import util.InputReader;
 
 public class Solution {
 	private static final String FILENAME = "src/advent06/input.txt";

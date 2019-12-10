@@ -2,7 +2,7 @@ package advent03;
 
 import java.util.List;
 
-import general.InputReader;
+import util.InputReader;
 
 public class Solution {
 	private static final String FILENAME = "src/advent03/input.txt";

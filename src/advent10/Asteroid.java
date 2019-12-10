@@ -1,23 +1,30 @@
 package advent10;
 
 import java.awt.Point;
+import java.util.ArrayList;
+import java.util.List;
 
-import general.Fraction;
+import util.Fraction;
 
 public class Asteroid extends Point {
 	private static final long serialVersionUID = 1439426092533936565L;
-	private int visibleAsteroids;
+	private List<Asteroid> visibleAsteroids;
 	
 	public Asteroid(int x, int y) {
 		super(x, y);
+		visibleAsteroids = new ArrayList<>();
 	}
 	
-	protected void addAsteroid() {
-		visibleAsteroids++;
+	protected void addAsteroid(Asteroid asteroid) {
+		visibleAsteroids.add(asteroid);
 	}
 	
-	public int getVisibleAsteroids() {
-		return visibleAsteroids;
+	public int getVisibleAsteroidCount() {
+		return visibleAsteroids.size();
+	}
+	
+	public List<Asteroid> getVisibleAsteroids() {
+		return new ArrayList<>(visibleAsteroids);
 	}
 	
 	public boolean onLineSegment(Point origin, Point target) {
@@ -45,8 +52,20 @@ public class Asteroid extends Point {
 		}
 	}
 	
+	public double angleBetween(Point target) {
+		return angleFromOrigin(new Point(target.x - x, target.y - y));
+	}
+	
+	public static double angleFromOrigin(Point target) {
+		return (360d - ((Math.toDegrees(Math.atan2(-target.y, target.x)) + 180d + 90d) % 360d)) % 360d;
+	}
+	
 	@Override
 	public String toString() {
-		return super.toString() + ": " + visibleAsteroids;
+		return super.toString() + ": " + visibleAsteroids.size();
+	}
+
+	public void clearAllVisibleAsteroids() {
+		visibleAsteroids = new ArrayList<>();
 	}
 }
