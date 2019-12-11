@@ -37,11 +37,11 @@ public class Solution {
 		StringBuilder result = new StringBuilder();
 		for(int y = picture.length - 1; y >= 0; y--) {
 			for(int x = 0; x < picture[y].length; x++) {
-				result.append(picture[y][x] == 0L ? "█" : " ");
+				result.append(picture[y][x] == 1L ? "█" : " ");
 			}
 			result.append("\n");
 		}
 		
-		System.out.println(result.toString().trim()); //UERPRFGJ
+		System.out.println(result.toString()); //UERPRFGJ
 	}
 }
