@@ -34,7 +34,7 @@ public class Fraction {
 	}
 	
 	public void simplify() {
-		int gcd = gcd(numerator, denominator);
+		int gcd = MathExt.gcd(numerator, denominator);
 		numerator /= gcd;
 		denominator /= gcd;
 		
@@ -44,23 +44,11 @@ public class Fraction {
 		}
 	}
 	
-	private int gcd(int x, int y) {
-		if(y == 0) {
-			return x;
-		} else {
-			return gcd(y, x % y);
-		}
-	}
-	
-	private int lcm(int x, int y) {
-		return Math.abs(x * y) / gcd(x, y);
-	}
-	
 	public Fraction add(int number) {
 		return new Fraction(numerator + number * denominator, denominator);
 	}
 	public Fraction add(Fraction fraction) {
-		int newDenominator = lcm(denominator, fraction.denominator);
+		int newDenominator = MathExt.lcm(denominator, fraction.denominator);
 		int numeratorFirst = numerator * (newDenominator / denominator);
 		int numeratorSecond = fraction.numerator * (newDenominator / fraction.denominator);
 		return new Fraction(numeratorFirst + numeratorSecond, newDenominator);
@@ -75,19 +63,19 @@ public class Fraction {
 	
 	public Fraction multiply(int number) {
 		//we do this instead of just (numerator * number) / denominator in order that for instance (Integer.MAX_VALUE / 2) * 2 return Integer.MAX_VALUE / 1 instead of -1/1.
-		int gcd = gcd(number, denominator);
+		int gcd = MathExt.gcd(number, denominator);
 		return new Fraction(numerator * (number / gcd), denominator / gcd);
 	}
 	public Fraction multiply(Fraction fraction) {
-		int gcdFirstDenominatorSecondNumerator = gcd(denominator, fraction.numerator);
-		int gcdFirstNumeratorSecondDenominator = gcd(numerator, fraction.denominator);
+		int gcdFirstDenominatorSecondNumerator = MathExt.gcd(denominator, fraction.numerator);
+		int gcdFirstNumeratorSecondDenominator = MathExt.gcd(numerator, fraction.denominator);
 		int newNumerator = (numerator / gcdFirstNumeratorSecondDenominator) * (fraction.numerator / gcdFirstDenominatorSecondNumerator);
 		int newDenominator = (denominator / gcdFirstDenominatorSecondNumerator) * (fraction.denominator / gcdFirstNumeratorSecondDenominator);
 		return new Fraction(newNumerator, newDenominator);
 	}
 	
 	public Fraction divide(int number) {
-		int gcd = gcd(number, numerator);
+		int gcd = MathExt.gcd(number, numerator);
 		return new Fraction(numerator / gcd, denominator * (number / gcd));
 	}
 	public Fraction divide(Fraction fraction) {
