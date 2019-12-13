@@ -160,6 +160,10 @@ public class Program {
 		return !output.isEmpty();
 	}
 	
+	public int getOutputCount() {
+		return output.size();
+	}
+	
 	public Long getNextOutput() {
 		return lastRetrievedOutput = output.remove();
 	}

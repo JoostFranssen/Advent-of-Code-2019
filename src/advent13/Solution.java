@@ -17,6 +17,16 @@ public class Solution {
 		Game game = new Game(intcode);
 		game.run();
 		
-		System.out.println(game.countTiles(Game.TILE_BLOCK));
+		//part 1
+		System.out.println(game.countTiles(Game.TILE_BLOCK)); //213
+		
+		//part 2
+		intcode.set(0, 2L);
+		game = new Game(intcode);
+		game.run();
+		
+		game.playToFinish();
+		
+		System.out.println(game.getScore()); //11441
 	}
 }
