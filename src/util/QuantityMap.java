@@ -3,11 +3,14 @@ package util;
 import java.util.HashMap;
 import java.util.Map;
 
-public class QuantityMap<K> extends HashMap<K, Integer> {
+public class QuantityMap<K> extends HashMap<K, Long> {
 	private static final long serialVersionUID = 2916879041580655128L;
 	
-	public Integer putAdd(K key, Integer value) {
-		Integer oldValue = 0;
+	public Long putAdd(K key, int value) {
+		return putAdd(key, (long)value);
+	}
+	public Long putAdd(K key, Long value) {
+		Long oldValue = 0L;
 		if(containsKey(key)) {
 			oldValue = get(key);
 		}
@@ -26,7 +29,7 @@ public class QuantityMap<K> extends HashMap<K, Integer> {
 		super(initialCapacity);
 	}
 	
-	public QuantityMap(Map<? extends K, ? extends Integer> m) {
+	public QuantityMap(Map<? extends K, ? extends Long> m) {
 		super(m);
 	}
 }
