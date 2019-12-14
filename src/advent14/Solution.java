@@ -32,10 +32,24 @@ public class Solution {
 		
 		//part 2
 		final long oreAmount = 1_000_000_000_000L;
+		long obtainedFuel = 0L;
 		
+		requirements = new QuantityMap<>();
+		while(true) {
+			requirements.put("FUEL", 1L);
+			requirements = computeRequiredOre(requirements);
+			if(requirements.get("ORE") <= oreAmount) {
+				obtainedFuel++;
+			} else {
+				break;
+			}
+		}
+		
+		System.out.println(obtainedFuel); //1330066
 	}
 
-	private static QuantityMap<String> computeRequiredOre(QuantityMap<String> requirements) {
+	private static QuantityMap<String> computeRequiredOre(QuantityMap<String> desire) {
+		QuantityMap<String> requirements = new QuantityMap<>(desire);
 		while(anyMatch(requirements, (k, v) -> k.equals("ORE") ? false : v > 0)) {
 			QuantityMap<String> newRequirements = new QuantityMap<>(requirements);
 			Iterator<String> it = requirements.keySet().iterator();
