@@ -1,5 +1,6 @@
 package advent15;
 
+import java.awt.Point;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,10 +16,13 @@ public class Solution {
 		List<Long> intcode = Arrays.asList(input.split(",")).stream().map(Long::valueOf).collect(Collectors.toList());
 		
 		RepairDroid droid = new RepairDroid(intcode);
-
-		droid.run();
+		
+		//part 1
+		droid.run((position, output) -> output == RepairDroid.OXYGEN_TANK);
 		System.out.println(droid.getSteps()); //252
 		
-		
+		//part 2
+		droid.run((position, output) -> position.equals(new Point(0, 0)));
+		System.out.println(droid.fillWithOxygen()); //350
 	}
 }

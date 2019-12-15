@@ -1,10 +1,12 @@
 package advent15;
 
 import java.awt.Point;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiPredicate;
 
 import intcode.Program;
 
@@ -14,9 +16,10 @@ public class RepairDroid {
 	public static final int WEST = 3;
 	public static final int EAST = 4;
 	
-	private static final int FOUND_WALL = 0;
-	private static final int FOUND_EMPTY = 1;
-	private static final int FOUND_OXYGEN_TANK = 2;
+	public static final int WALL = 0;
+	public static final int EMPTY = 1;
+	public static final int OXYGEN_TANK = 2;
+	public static final int OXYGENATED = 3;
 	
 	private Map<Point, Integer> map;
 	private Point position;
@@ -30,32 +33,36 @@ public class RepairDroid {
 		position = new Point(0, 0);
 		direction = NORTH;
 		map = new HashMap<>();
-		map.put(position, FOUND_EMPTY);
+		map.put(position, EMPTY);
 	}
 	
-	public void run() {
+	public void run(BiPredicate<Point, Integer> stopCondition) {
 		RUNNING:
 		while(true) {
 			program.supplyInput((long)direction);
 			program.run();
 			if(program.hasOutput()) {
 				int output = program.getNextOutput().intValue();
-				int stepCountDirection = map.containsKey(getPointInDirection(direction)) ? -1 : 1;
+				Point nextPoint = getPointInDirection(direction);
+				int stepCountDirection = map.containsKey(nextPoint) ? -1 : 1;
 				
-				map.put(getPointInDirection(direction), output);
+				map.put(nextPoint, output);
 				switch(output) {
-					case FOUND_WALL:
+					case WALL:
 						direction = getLeftDirection(direction);
 						break;
-					case FOUND_EMPTY:
+					case EMPTY:
 						move();
 						steps += stepCountDirection;
 						direction = getRightDirection(direction);
 						break;
-					case FOUND_OXYGEN_TANK:
+					case OXYGEN_TANK:
 						move();
 						steps++;
-						break RUNNING;
+						break;
+				}
+				if(stopCondition.test(nextPoint, output)) {
+					break RUNNING;
 				}
 			}
 		}
@@ -72,7 +79,7 @@ public class RepairDroid {
 		if(program.hasOutput()) {
 			int output = program.getNextOutput().intValue();
 			map.put(getPointInDirection(direction), output);
-			if(output == FOUND_EMPTY) {
+			if(output == EMPTY) {
 				move();
 			}
 		}
@@ -131,6 +138,47 @@ public class RepairDroid {
 		position = getPointInDirection(direction);
 	}
 	
+	private Point getOxygenTankPoint() {
+		for(Point p : map.keySet()) {
+			if(map.get(p) == OXYGEN_TANK) {
+				return p;
+			}
+		}
+		return null;
+	}
+	
+	public int fillWithOxygen() {
+		int minutes = 0;
+		List<Point> targets = new ArrayList<>();
+		targets.add(getOxygenTankPoint());
+		map.put(getOxygenTankPoint(), OXYGENATED);
+		
+		while(!targets.isEmpty()) {
+			List<Point> newTargets = new ArrayList<>();
+			for(Point p : targets) {
+				newTargets.addAll(spreadOxygen(p));
+			}
+			targets = newTargets;
+			if(!targets.isEmpty()) {
+				minutes++;
+			}
+		}
+		
+		return minutes;
+	}
+	
+	private List<Point> spreadOxygen(Point origin) {
+		List<Point> targets = new ArrayList<>();
+		for(int i = 0; i < 4; i++) {
+			Point neighbor = new Point(origin.x + (i % 2 == 0 ? i - 1 : 0), origin.y + (i % 2 == 1 ? i - 2 : 0));
+			if(map.containsKey(neighbor) && map.get(neighbor) == EMPTY) {
+				map.put(neighbor, OXYGENATED);
+				targets.add(neighbor);
+			}
+		}
+		return targets;
+	}
+	
 	public void printMap() {
 		Set<Point> points = map.keySet();
 		int minX = points.stream().map(p -> p.x).min(Integer::compare).get();
@@ -160,15 +208,17 @@ public class RepairDroid {
 					continue;
 				}
 				switch(board[y][x]) {
-					case FOUND_EMPTY:
+					case EMPTY:
 						sb.append(".");
 						break;
-					case FOUND_WALL:
+					case WALL:
 						sb.append("█");
 						break;
-					case FOUND_OXYGEN_TANK:
+					case OXYGEN_TANK:
 						sb.append("#");
 						break;
+					case OXYGENATED:
+						sb.append("O");
 				}
 			}
 			sb.append("\n");
