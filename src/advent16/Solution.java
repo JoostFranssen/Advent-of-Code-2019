@@ -1,6 +1,5 @@
 package advent16;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -39,6 +38,6 @@ public class Solution {
 			}
 		}
 		
-		System.out.println(String.join("", signal.subList(0, 8).stream().map(String::valueOf).toArray(String[]::new)));
+		System.out.println(String.join("", signal.subList(0, 8).stream().map(String::valueOf).toArray(String[]::new))); //47664469
 	}
 }
