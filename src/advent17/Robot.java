@@ -41,10 +41,10 @@ public class Robot {
 		boolean isIntersection = charAtScaffolding(p) == '#';
 		for(int i = -1; i <= 1; i += 2) {
 			try {
-				isIntersection |= charAtScaffolding(new Point(p.x + i, p.y)) == '#';
+				isIntersection &= charAtScaffolding(new Point(p.x + i, p.y)) == '#';
 			} catch(IndexOutOfBoundsException e) {}
 			try {
-				isIntersection |= charAtScaffolding(new Point(p.x, p.y + i)) == '#';
+				isIntersection &= charAtScaffolding(new Point(p.x, p.y + i)) == '#';
 			} catch(IndexOutOfBoundsException e) {}
 		}
 		return isIntersection;

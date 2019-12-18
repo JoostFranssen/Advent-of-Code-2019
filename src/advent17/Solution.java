@@ -16,8 +16,11 @@ public class Solution {
 		
 		//part 1
 		Robot robot = new Robot(intcode);
+		System.out.println(robot.sumAllAlignmentParameters()); //3292
+		
+		//part 2
+		intcode.set(0, 2L);
+		robot = new Robot(intcode);
 		robot.print();
-		System.out.println(robot.findIntersections());
-		System.out.println(robot.sumAllAlignmentParameters());
 	}
 }
