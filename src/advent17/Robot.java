@@ -85,7 +85,7 @@ public class Robot {
 		return routines.get(name);
 	}
 	
-	public long getOutput() {
+	public Long getOutput() {
 		return program.getNextOutput();
 	}
 	

@@ -28,17 +28,34 @@ public class Solution {
 		
 		//"L,12,R,4,R,4,L,6,L,12,R,4,R,4,R,12,L,12,R,4,R,4,L,6,L,10,L,6,R,4,L,12,R,4,R,4,L,6,L,12,R,4,R,4,R,12,L,10,L,6,R,4,L,12,R,4,R,4,R,12,L,10,L,6,R,4,L,12,R,4,R,4,L,6"
 		
-		robot.setRoutine('m', "A,B,A,C,A,B,C,A,C,A\n");
+		robot.setRoutine('m', "A,B,A,C,A,B,C,B,C,A\n");
 		
 		robot.suppyInputRoutine(robot.getRoutine('m'));
 		robot.suppyInputRoutine(robot.getRoutine('A'));
 		robot.suppyInputRoutine(robot.getRoutine('B'));
 		robot.suppyInputRoutine(robot.getRoutine('C'));
-		robot.suppyInputRoutine(Arrays.asList((long)'y', (long)'\n'));
+		robot.suppyInputRoutine(Arrays.asList((long)'n', (long)'\n'));
 		
-		System.out.println(robot.getOutput());
+//		System.out.println(robot.getOutput());
+		
 		while(robot.getProgram().hasOutput()) {
-			System.out.print(robot.getOutput());
+			robot.getOutput();
 		}
+		System.out.println(robot.getProgram().getLastRetrievedOutput()); //651043
+		
+		//print the video feed:
+//		while(robot.getProgram().hasOutput()) {
+//			char previousOutput = (char)robot.getProgram().getLastRetrievedOutput().intValue();
+//			System.out.print((char)robot.getOutput().intValue());
+//			try {
+//				if(previousOutput == '\n' && (char)robot.getProgram().getLastRetrievedOutput().intValue() == '\n') {
+//					Thread.sleep(50);
+//				}
+//			} catch(InterruptedException e) {
+//				e.printStackTrace();
+//			}
+//		}
+//		
+//		System.out.println(robot.getProgram().getLastRetrievedOutput()); //651043
 	}
 }
