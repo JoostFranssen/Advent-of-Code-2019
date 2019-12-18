@@ -2,16 +2,22 @@ package advent17;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import intcode.Program;
 
 public class Robot {
 	private Program program;
 	String[] scaffolding;
+	private Map<Character, List<Long>> routines;
 	
 	public Robot(List<Long> sourceCode) {
 		program = new Program(sourceCode);
+		routines = new HashMap<>();
 		run();
 	}
 	
@@ -64,5 +70,26 @@ public class Robot {
 	
 	public void print() {
 		System.out.println(String.join("\n", scaffolding));
+	}
+	
+	public void suppyInputRoutine(List<Long> input) {
+		input.forEach(i -> program.supplyInput(i));
+		program.run();
+	}
+	
+	public void setRoutine(char name, String sequence) {
+		routines.put(name, Arrays.asList(sequence.split("")).stream().map(s -> (long)s.charAt(0)).collect(Collectors.toList()));
+	}
+	
+	public List<Long> getRoutine(char name) {
+		return routines.get(name);
+	}
+	
+	public long getOutput() {
+		return program.getNextOutput();
+	}
+	
+	public Program getProgram() {
+		return program;
 	}
 }
