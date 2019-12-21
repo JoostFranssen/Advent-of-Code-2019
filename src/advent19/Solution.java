@@ -1,5 +1,6 @@
 package advent19;
 
+import java.awt.Point;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,9 +16,11 @@ public class Solution {
 		List<Long> intcode = Arrays.asList(input.split(",")).stream().map(Long::valueOf).collect(Collectors.toList());
 		
 		//part 1
-		TractorBeam beam = new TractorBeam(50, 50, intcode);
-		System.out.println(beam.getAffectedPoints().size()); //229
+		TractorBeam beam = new TractorBeam(intcode);
+		System.out.println(beam.getAffectedPoints(50, 50).size()); //229
 		
 		//part 2
+		Point topLeft = beam.fitSquare(100);
+		System.out.println(10_000 * topLeft.x + topLeft.y); //6950903
 	}
 }
