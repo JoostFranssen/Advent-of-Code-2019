@@ -1,9 +1,7 @@
 package advent18;
 
-import java.awt.Point;
 import java.util.List;
 
-import util.Direction;
 import util.InputReader;
 
 public class Solution {

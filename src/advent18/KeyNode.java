@@ -7,12 +7,10 @@ import java.util.Set;
 
 public class KeyNode {
 	private Set<Character> keysObtained;
-	private Character key;
 	private List<KeyNode> children;
 	
-	public KeyNode(Character key, Set<Character> keysObtained) {
+	public KeyNode(Set<Character> keysObtained) {
 		this.keysObtained = new HashSet<>(keysObtained);
-		this.key = key;
 		children = new ArrayList<>();
 	}
 	
