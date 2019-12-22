@@ -28,4 +28,8 @@ public enum Direction {
 	public static Direction toLeft(Direction dir) {
 		return values[Integer.remainderUnsigned(dir.ordinal() - 1, 4)];
 	}
+	
+	public static Direction opposite(Direction dir) {
+		return values[(dir.ordinal() + 2) % 4];
+	}
 }
