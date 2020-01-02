@@ -12,6 +12,8 @@ public class Solution {
 		List<char[]> input = inputReader.readConvertLines(s -> s.toCharArray());
 		
 		PlutoMaze maze = new PlutoMaze(input);
-		System.out.println(maze.findShortestPathLength(maze.getStart(), maze.getEnd())); //560
+		System.out.println(maze.findShortestPathLength()); //560
+		
+		System.out.println(maze.findShortestPathLengthRecursive()); //6642
 	}
 }

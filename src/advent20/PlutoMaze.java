@@ -2,6 +2,7 @@ package advent20;
 
 import java.awt.Point;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -20,11 +21,20 @@ public class PlutoMaze {
 	public PlutoMaze(List<char[]> input) {
 		//create passages
 		Map<Point, PlutoPassage> mazeByPoints = new HashMap<>();
-		for(int y = 0; y < input.size(); y++) {
+		int height = input.size();
+		int width = input.get(0).length;
+		
+		for(int y = 0; y < height; y++) {
 			char[] line = input.get(y);
-			for(int x = 0; x < line.length; x++) {
+			for(int x = 0; x < width; x++) {
 				if(line[x] == '.') {
-					mazeByPoints.put(new Point(x, y), new PlutoPassage());
+					PlutoPassage passage;
+					if(Character.isLetter(line[x + 1]) || Character.isLetter(line[x - 1]) || Character.isLetter(input.get(y - 1)[x]) || Character.isLetter(input.get(y + 1)[x])) {
+						passage = new PlutoPortal(new Point(x, y), (x <= 2 || width - x <= 3) || (y <= 2 || height - y <= 3));
+					} else {
+						passage = new PlutoPassage(new Point(x, y));
+					}
+					mazeByPoints.put(new Point(x, y), passage);
 				}
 			}
 		}
@@ -68,7 +78,7 @@ public class PlutoMaze {
 		end = mazeByPoints.get(teleportations.get("ZZ"));
 	}
 	
-	public int findShortestPathLength(PlutoPassage start, PlutoPassage end) {
+	public int findShortestPathLength() {
 		Set<PlutoPassage> visited = new HashSet<>();
 		Map<PlutoPassage, Integer> distanceToStart = new HashMap<>();
 		Queue<PlutoPassage> queue = new ArrayDeque<>();
@@ -90,15 +100,61 @@ public class PlutoMaze {
 		throw new NoSuchElementException();
 	}
 	
+	public int findShortestPathLengthRecursive() {
+		List<Set<PlutoPassage>> visitedByLevel = new ArrayList<>();
+		List<Map<PlutoPassage, Integer>> distanceToStartByLevel = new ArrayList<>();
+		Queue<PlutoPassage> passageQueue = new ArrayDeque<>();
+		Queue<Integer> levelQueue = new ArrayDeque<>();
+		passageQueue.offer(start);
+		levelQueue.offer(0);
+		visitedByLevel.add(new HashSet<>());
+		visitedByLevel.get(0).add(start);
+		distanceToStartByLevel.add(new HashMap<>());
+		distanceToStartByLevel.get(0).put(start, 0);
+		
+		while(!passageQueue.isEmpty()) {
+			PlutoPassage passage = passageQueue.poll();
+			int level = levelQueue.poll();
+			if(level == 0) {
+				if(passage.equals(end)) {
+					return distanceToStartByLevel.get(0).get(passage);
+				}
+			}
+			for(PlutoPassage neighbor : passage.getNeighbors()) {
+				int neighborLevel = level;
+				
+				if(neighbor instanceof PlutoPortal) {
+					if(passage instanceof PlutoPortal) {
+						PlutoPortal passagePortal = (PlutoPortal)passage;
+						neighborLevel += passagePortal.isOuter() ? -1 : 1;
+						if(visitedByLevel.size() <= neighborLevel) {
+							visitedByLevel.add(new HashSet<>());
+							distanceToStartByLevel.add(new HashMap<>());
+						}
+					}
+					
+					PlutoPortal neighborPortal = (PlutoPortal)neighbor;
+					if(neighborLevel == 0) {
+						if(neighborPortal.isOuter() && !(neighborPortal.equals(end) || neighborPortal.equals(start))) {
+							continue;
+						}
+					} else {
+						if(neighborPortal.equals(start) || neighborPortal.equals(end)) {
+							continue;
+						}
+					}
+				}
+				if(visitedByLevel.get(neighborLevel).add(neighbor)) {
+					distanceToStartByLevel.get(neighborLevel).put(neighbor, distanceToStartByLevel.get(level).get(passage) + 1);
+					passageQueue.offer(neighbor);
+					levelQueue.offer(neighborLevel);
+				}
+			}
+		}
+		throw new NoSuchElementException();
+	}
+	
 	private List<Point> getSurroundingPoints(Point p) {
 		return Arrays.asList(Direction.values()).stream().map(d -> Direction.getPointInDirection(p, d)).collect(Collectors.toList());
-	}
-
-	public PlutoPassage getStart() {
-		return start;
-	}
-
-	public PlutoPassage getEnd() {
-		return end;
 	}
 }
