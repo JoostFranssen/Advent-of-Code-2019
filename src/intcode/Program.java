@@ -152,6 +152,10 @@ public class Program {
 		this.input.add(input);
 	}
 	
+	public void supplyInput(String input) {
+		Arrays.asList(input.split("")).stream().map(s -> (long)s.charAt(0)).forEach(this::supplyInput);
+	}
+	
 	public Long peekNextInput() {
 		return input.peek();
 	}
