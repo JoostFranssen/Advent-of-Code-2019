@@ -17,8 +17,6 @@ public class Solution {
 			shuffle.perform(deck);
 		}
 		
-		System.out.println(deck);
-		
-		System.out.println(deck.getCardPosition(2019));
+		System.out.println(deck.getCardPosition(2019)); //4096
 	}
 }
