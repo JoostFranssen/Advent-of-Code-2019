@@ -4,8 +4,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
 
-public class SpaceDeck {
-	private static final int DEFAULT_SIZE = 10_007;
+public class SpaceDeck implements Shuffleable {
+	public static final int DEFAULT_SIZE = 10_007;
 	
 	private Stack<Integer> deck;
 	private int size;
@@ -21,6 +21,7 @@ public class SpaceDeck {
 		}
 	}
 	
+	@Override
 	public void dealIntoNewStack() {
 		Stack<Integer> newDeck = new Stack<>();
 		while(!deck.isEmpty()) {
@@ -29,6 +30,7 @@ public class SpaceDeck {
 		deck = newDeck;
 	}
 	
+	@Override
 	public void cutCards(int n) {
 		n = Math.floorMod(n, size);
 		List<Integer> cutCards = deck.subList(deck.size() - n, deck.size());
@@ -38,6 +40,7 @@ public class SpaceDeck {
 		deck.addAll(cutCards);
 	}
 	
+	@Override
 	public void dealWithIncrement(int n) {
 		Integer[] newDeck = new Integer[size];
 		int position = 0;
@@ -57,6 +60,10 @@ public class SpaceDeck {
 		} else {
 			return size - 1 - index;
 		}
+	}
+	
+	public int getCardAt(int position) {
+		return deck.get(size - 1 - position);
 	}
 	
 	@Override

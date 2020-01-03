@@ -2,11 +2,11 @@ package advent22;
 
 @FunctionalInterface
 public interface Shuffle {
-	void perform(SpaceDeck deck);
+	void perform(Shuffleable deck);
 	
 	static Shuffle shuffleFromString(String shuffleString) {
 		if(shuffleString.equals("deal into new stack")) {
-			return SpaceDeck::dealIntoNewStack;
+			return d -> d.dealIntoNewStack();
 		}
 		
 		if(shuffleString.startsWith("deal with increment ")) {
