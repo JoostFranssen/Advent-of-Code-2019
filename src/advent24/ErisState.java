@@ -3,15 +3,21 @@ package advent24;
 import java.util.Arrays;
 
 public class ErisState {
-	private Tile[][] grid;
+	protected Tile[][] grid;
 	
 	public ErisState(Tile[][] initialGrid) {
-		grid = initialGrid;
+		grid = new Tile[initialGrid.length][];
+		for(int i = 0; i < grid.length; i++) {
+			grid[i] = new Tile[initialGrid[i].length];
+			for(int j = 0; j < grid[i].length; j++) {
+				grid[i][j] = new Tile(initialGrid[i][j]);
+			}
+		}
 		
 		setNeighbors();
 	}
-
-	private void setNeighbors() {
+	
+	protected void setNeighbors() {
 		for(int i = 0; i < grid.length; i++) {
 			for(int j = 0; j < grid[i].length; j++) {
 				if(i > 0) {
@@ -30,15 +36,27 @@ public class ErisState {
 		}
 	}
 	
+	public Tile get(int i, int j) {
+		return grid[i][j];
+	}
+	
 	public void update() {
-		for(int i = 0; i < grid.length; i++) {
-			for(int j = 0; j < grid[i].length; j++) {
-				grid[i][j].determineNextState();
-			}
-		}
+		prepareUpdate();
+		completeUpdate();
+	}
+
+	public void completeUpdate() {
 		for(int i = 0; i < grid.length; i++) {
 			for(int j = 0; j < grid[i].length; j++) {
 				grid[i][j].update();
+			}
+		}
+	}
+
+	public void prepareUpdate() {
+		for(int i = 0; i < grid.length; i++) {
+			for(int j = 0; j < grid[i].length; j++) {
+				grid[i][j].determineNextState();
 			}
 		}
 	}

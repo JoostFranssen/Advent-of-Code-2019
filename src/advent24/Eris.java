@@ -25,6 +25,12 @@ public class Eris {
 		}
 	}
 	
+	public void runFor(int iterations) {
+		for(int i = 0; i < iterations; i++) {
+			runIteration();
+		}
+	}
+	
 	public String firstDuplicate() {
 		for(int i = 0; i < gridHistory.size(); i++) {
 			for(int j = i + 1; j < gridHistory.size(); j++) {

@@ -11,9 +11,17 @@ public class Solution {
 		InputReader<Tile[]> inputReader = new InputReader<>(FILENAME);
 		Tile[][] grid = inputReader.readConvertLines(s -> Arrays.asList(s.split("")).stream().map(c -> new Tile(c.equals(Character.toString(Tile.BUG_CHAR)))).toArray(Tile[]::new)).toArray(Tile[][]::new);
 		
-		Eris eris = new Eris(grid);
+		//part 1
+		final Eris eris = new Eris(grid);
 		
 		eris.runUntil(() -> eris.firstDuplicate() != null);
 		System.out.println(ErisState.biodiversityRatingFromString(eris.firstDuplicate())); //32509983
+		
+		//part 2
+		ErisRecursive erisRecursive = new ErisRecursive(grid);
+
+		erisRecursive.runFor(200);
+		
+		System.out.println(erisRecursive.countBugs()); //2012
 	}
 }

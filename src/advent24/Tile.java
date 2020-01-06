@@ -11,9 +11,15 @@ public class Tile {
 	private boolean willHaveBug;
 	private List<Tile> neighbors;
 	
+	public Tile() {
+		this(false);
+	}
 	public Tile(boolean hasBug) {
 		this.bug = hasBug;
 		neighbors = new ArrayList<>();
+	}
+	public Tile(Tile tile) {
+		this(tile.hasBug());
 	}
 	
 	public void addNeighbor(Tile neighbor) {
