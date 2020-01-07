@@ -4,32 +4,41 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Path {
-	private Tile start;
-	private Tile end;
-	private int distance;
-	private List<Tile> tiles;
+	private List<Door> doors;
+	private List<Key> keys;
+	private int length;
+	private Passage start, end;
 	
-	public Path(Tile start, Tile end, int distance, List<Tile> tiles) {
-		super();
+	public Path(Passage start, Passage end, int length, List<Door> doors, List<Key> keys) {
 		this.start = start;
 		this.end = end;
-		this.distance = distance;
-		this.tiles = new ArrayList<>(tiles);
+		this.length = length;
+		this.doors = new ArrayList<>(doors);
+		this.keys = new ArrayList<>(keys);
+	}
+	
+	public List<Key> getKeys() {
+		return new ArrayList<>(keys);
+	}
+	
+	public List<Door> getDoors() {
+		return new ArrayList<>(doors);
 	}
 
-	public Tile getStart() {
+	public int getLength() {
+		return length;
+	}
+
+	public Passage getStart() {
 		return start;
 	}
 
-	public Tile getEnd() {
+	public Passage getEnd() {
 		return end;
 	}
-
-	public int getDistance() {
-		return distance;
-	}
-
-	public List<Tile> getDoorsRequired() {
-		return new ArrayList<>(tiles);
+	
+	@Override
+	public String toString() {
+		return start + " --> " + end + " in " + length + "; doors: " + doors + "; keys: " + keys;
 	}
 }

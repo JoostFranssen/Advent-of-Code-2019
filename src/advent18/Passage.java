@@ -1,20 +1,20 @@
 package advent18;
 
-import java.awt.Point;
+import java.util.ArrayList;
+import java.util.List;
 
-public class Passage extends Tile {
+public class Passage {
+	protected List<Passage> neighbors;
 	
-	public Passage(Point location) {
-		super(location);
+	public Passage() {
+		neighbors = new ArrayList<>();
 	}
-
-	@Override
-	public String toString() {
-		return ".";
+	
+	public void addNeighbor(Passage neighbor) {
+		neighbors.add(neighbor);
 	}
-
-	@Override
-	public boolean isPassable() {
-		return true;
+	
+	public List<Passage> getNeighbors() {
+		return new ArrayList<>(neighbors);
 	}
 }
