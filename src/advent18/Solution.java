@@ -18,7 +18,7 @@ public class Solution {
 		
 		Maze maze = new Maze(input);
 		
-		//System.out.println(maze.findShortestDistanceToAllKeys()); //3646
+		System.out.println(maze.findShortestDistanceToAllKeys()); //3646
 		
 		//part 2
 		inputReader = new InputReader<>(FILENAME2);
@@ -61,6 +61,6 @@ public class Solution {
 		for(Maze mazeQuadrant : mazes) {
 			steps += mazeQuadrant.findShortestDistanceToAllKeys();
 		}
-		System.out.println(steps);
+		System.out.println(steps); //1730
 	}
 }
