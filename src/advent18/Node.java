@@ -1,36 +1,43 @@
 package advent18;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Node {
-	public static final char NO_KEY = '*';
+	public static final char START_LABEL = '@';
+	public static final char END_LABEL = '*';
 	
 	private char key;
-	private Map<Node, Integer> neighbors;
+	private List<Edge> edges;
 	
 	public Node() {
-		this(NO_KEY);
+		this(START_LABEL);
 	}
 	public Node(char key) {
 		this.key = key;
-		neighbors = new HashMap<>();
+		edges = new ArrayList<>();
 	}
 	
-	public void addNeighbor(Node node, int distance) {
-		neighbors.put(node, distance);
+	public List<Edge> getNeighbors() {
+		return new ArrayList<>(edges);
+	}
+	
+	public void addNeighbor(Edge edge) {
+		int i;
+		for(i = 0; i < edges.size(); i++) {
+			if(edges.get(i).getLength() > edge.getLength()) {
+				break;
+			}
+		}
+		edges.add(i, edge);
 	}
 	
 	public char getKey() {
 		return key;
 	}
 	
-	public Set<Node> getNeighbors() {
-		return neighbors.keySet();
-	}
-	
-	public int getDistanceToNeighbor(Node neighbor) {
-		return neighbors.get(neighbor);
+	@Override
+	public String toString() {
+		return String.valueOf(key);
 	}
 }

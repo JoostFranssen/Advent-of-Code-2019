@@ -15,8 +15,6 @@ import java.util.stream.Collectors;
 
 import util.Direction;
 
-
-
 public class Maze {
 	private Passage start;
 	private Map<Character, Key> keys;
@@ -155,9 +153,7 @@ public class Maze {
 		for(Key key : targetKeys) {
 			paths.add(findShortestPath(start, key));
 		}
-		
-		paths.removeIf(p -> !(providedKeys.stream().map(k -> k.getLabel()).collect(Collectors.toSet())).containsAll(p.getDoors().stream().map(d -> Character.toLowerCase(d.getLabel())).collect(Collectors.toSet())));
-		
+				
 		return paths;
 	}
 	
@@ -174,63 +170,98 @@ public class Maze {
 		return paths;
 	}
 	
+	public List<Path> getPathsToKeys(Passage start) {
+		List<Path> paths = new ArrayList<>();
+		
+		Set<Key> targetKeys = new HashSet<>(keys.values());
+		if(start instanceof Key) {
+			targetKeys.remove((Key)start);
+		}
+		
+		for(Key key : targetKeys) {
+			paths.add(findShortestPath(start, key));
+		}
+		
+		return paths;
+	}
+	
 	public Node createGraph() {
-		Node startNode = new Node();
+		Node startNode = new Node(Node.START_LABEL);
 		
-		Queue<Node> nodesToVisit = new ArrayDeque<>();
-		nodesToVisit.offer(startNode);
-		Queue<Set<Character>> obtainedKeysAtNode = new ArrayDeque<>();
-		obtainedKeysAtNode.offer(new HashSet<>());
+		Map<Character, Node> nodesByKey = new HashMap<>();
+		nodesByKey.put(Node.START_LABEL, startNode);
 		
-		while(!nodesToVisit.isEmpty()) {
-			Node node = nodesToVisit.poll();
-			Set<Character> obtainedKeys = obtainedKeysAtNode.poll();
-			if(obtainedKeys.size() == keys.keySet().size()) {
-				return startNode;
-			}
-			List<Path> pathsToKeys = getPathsToReachableKeysWithoutIntermediateKeys(node.getKey() == Node.NO_KEY ? start : keys.get(node.getKey()), getKeysByLabel(obtainedKeys));
+		for(char key : keys.keySet()) {
+			nodesByKey.put(key, new Node(key));
+		}
+		
+		for(char key : nodesByKey.keySet()) {
+			Node node = nodesByKey.get(key);
+			List<Path> pathsToKeys = getPathsToKeys(key == Node.START_LABEL ? start : keys.get(key));
 			for(Path path : pathsToKeys) {
-				Set<Character> obtainedKeysCopy = new HashSet<>(obtainedKeys);
-				char neighborKey = ((Key)path.getEnd()).getLabel();
-				obtainedKeysCopy.add(neighborKey);
-				Node neighbor = new Node(neighborKey);
-				node.addNeighbor(neighbor, path.getLength());
-				nodesToVisit.offer(neighbor);
-				obtainedKeysAtNode.offer(obtainedKeysCopy);
+				char targetKey = ((Key)path.getEnd()).getLabel();
+				Set<Character> keysNecessary = path.getDoors().stream().map(d -> Character.toLowerCase(d.getLabel())).collect(Collectors.toSet());
+				keysNecessary.addAll(path.getKeys().stream().map(k -> k.getLabel()).filter(k -> k != targetKey).collect(Collectors.toSet()));
+				node.addNeighbor(new Edge(nodesByKey.get(targetKey), path.getLength(), keysNecessary));
 			}
 		}
 		
-		throw new IllegalStateException("Graph could not be constructed");
+		return startNode;
+	}
+	
+	public Optional<Integer> findShortestDistanceToKeysFrom(Node node, Set<Character> obtainedKeys) {
+		if(obtainedKeys.size() == keys.size()) {
+			return Optional.of(0);
+		}
+		
+		List<Integer> distances = new ArrayList<>();
+		for(Edge edge : node.getNeighbors()) {
+			if(obtainedKeys.containsAll(edge.getNecessaryKeys())) {
+				Node neighbor = edge.getTarget();
+				if(!obtainedKeys.contains(neighbor.getKey())) {
+					Set<Character> newlyObtainedKeys = new HashSet<>(obtainedKeys);
+					newlyObtainedKeys.add(neighbor.getKey());
+					Optional<Integer> distance = findShortestDistanceToKeysFrom(neighbor, newlyObtainedKeys);
+					if(distance.isPresent()) {
+						distances.add(distance.get() + edge.getLength());
+					}
+				}
+			}
+		}
+		return distances.stream().min(Integer::compare);
+	}
+	
+	private Optional<Integer> currentShortestDistance;
+	
+	private void findShortestDistanceToAllKeysFrom(Node start, Set<Character> obtainedKeys, int currentDistance) {
+		if(currentShortestDistance.isPresent()) {
+			if(currentDistance >= currentShortestDistance.get()) {
+				return;
+			}
+		}
+		
+		if(obtainedKeys.size() == keys.keySet().size()) {
+			if(currentShortestDistance.isEmpty() || currentShortestDistance.get() > currentDistance) {
+				currentShortestDistance = Optional.of(currentDistance);
+			}
+		}
+		
+		for(Edge edge : start.getNeighbors()) {
+			if(obtainedKeys.containsAll(edge.getNecessaryKeys())) {
+				Node neighbor = edge.getTarget();
+				Set<Character> newObtainedKeys = new HashSet<>(obtainedKeys);
+				if(newObtainedKeys.add(neighbor.getKey())) {
+					findShortestDistanceToAllKeysFrom(neighbor, newObtainedKeys, currentDistance + edge.getLength());
+				}
+			}
+		}
 	}
 	
 	public int findShortestDistanceToAllKeys() {
-		Node startNode = createGraph();
+		Node start = createGraph();
+		currentShortestDistance = Optional.empty();
 		
-		Optional<Integer> shortestDistance = Optional.empty();
-		Set<Node> visited = new HashSet<>();
-		Queue<Node> queue = new ArrayDeque<>();
-		Map<Node, Integer> lengthToStart = new HashMap<>();
-		
-		visited.add(startNode);
-		queue.offer(startNode);
-		lengthToStart.put(startNode, 0);
-		
-		while(!queue.isEmpty()) {
-			Node node = queue.poll();
-			if(node.getNeighbors().size() == 0) {
-				int distance = lengthToStart.get(node);
-				if(!shortestDistance.isPresent() || shortestDistance.get() > distance) {
-					shortestDistance = Optional.of(distance);
-				}
-			}
-			for(Node neighbor : node.getNeighbors()) {
-				if(visited.add(neighbor)) {
-					queue.offer(neighbor);
-					lengthToStart.put(neighbor, lengthToStart.get(node) + node.getDistanceToNeighbor(neighbor));
-				}
-			}
-		}
-		
-		return shortestDistance.get();
+		findShortestDistanceToAllKeysFrom(start, new HashSet<>(), 0);
+		return currentShortestDistance.get();
 	}
 }
